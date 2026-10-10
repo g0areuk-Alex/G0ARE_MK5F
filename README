@@ -1,0 +1,423 @@
+# G0ARE_MK5F
+
+A purpose-built Windows 11 desktop control console for the **Yaesu FT-1000MP Mark V Field**. It talks directly to the radio's rear CAT port through a USB-to-RS-232 adapter and uses a separately selectable Windows recording input for live AF analysis, receive-noise reduction, equalisation and monitored playback.
+
+Version: **0.6.12 engineering release**
+Default station identity: **G0ARE** (configurable at first start and from Station Tools)
+
+Version 0.6.12 makes the RX S-value follow the needle on a matching scale in
+every skin and the large AUTO meter. S0 clears the needle immediately; stale
+and missing feedback are identified separately. **Station Tools → Meter
+Calibration…** captures your nominal **13.8 V** reference for VCC and supports
+IC references in amps and RX S indications. References persist across restarts.
+Closing uses one input-blocking screen while station devices release, avoiding
+the delay from disabling the full console control tree.
+See the [release notes](RELEASE-NOTES-v0.6.12.md) and
+[calibration instructions](docs/METER-CALIBRATION.md).
+
+Version 0.6.11 gives the top menu a separate row with clear lettering, keeps the
+MK5F logo visible in full screen, and adds the MK5F icon to every application
+window. Hover any frequency digit and turn the wheel to tune by its place
+value; the finest CAT step is **10 Hz**. Below START/STOP AF, **RAW AF** and
+**PROCESSED AF** switch audible monitoring and the matching spectrum, and
+**LEARN** starts the same noise learner as the Audio window. Click an active
+monitor button again to turn monitoring off. All Audio window controls remain.
+See [release notes](RELEASE-NOTES-v0.6.11.md).
+
+Version 0.6.10 fits every console to the available window without scrolling.
+Smaller screens use a compact arrangement with the original controls and all
+sixteen section/station launchers visible. Meters, tuning and the AF plot adapt
+to their available space. Mouse-wheel input over the frequency display or dial
+goes straight to tuning, including partial and multiple notches, regardless of
+which main-console panel has focus. Maximise the window or press **F11** for
+the existing full-screen view. See [release notes](RELEASE-NOTES-v0.6.10.md).
+
+Version 0.6.9 fixes leftover text and native borders around buttons in every
+skin. It rebuilds the four original concepts with distinct layouts and native
+materials: a wood and aluminium Broadcast console, Paper's vertical navigation
+rail, Meridian's larger brass dial and nautical frames, and Bauhaus's black AF
+display and cobalt tuning panel. Original controls, selectable meters and the
+AF stop/shutdown repairs are retained. The live AF plot also marks the enabled
+voice filter's actual passband. See [release notes](RELEASE-NOTES-v0.6.9.md).
+
+Version 0.6.8 adds seven complete console presets: **Broadcast 1978**, **Paper
+Signal**, **Midnight Meridian**, **Bauhaus Signal**, **Enterprise Bridge**, **Deep
+Space Tactical** and **Orbital Glass**. Select one from **Console Presets** to
+apply its layout and skin together. Every original control and section remains
+live; the original five layouts and six skins are still available. The main
+transmit instrument and large meter now offer **PO, SWR, ALC, IC, VCC, MIC and
+TUN** selectors. **AUTO** on the large meter retains its original RX S-meter /
+TX power switching. IC and VCC use saved station references to display amps and
+volts; set them in **Station Tools → Meter Calibration…**. Raw counts remain
+available for diagnostics. Idle meter redraws are reduced, and skin changes refresh cached
+waterfall colours immediately. See [console and meter guide](docs/CONSOLE-SKINS-AND-METERS.md)
+for previews and the meanings of each reading.
+
+Version 0.6.7 repairs the AF stop and application shutdown paths. Windows input
+completion now signals a dedicated receive worker, playback uses buffer
+completion flags without a driver callback, and AF start/switch/stop plus
+shutdown device release run away from the UI thread. Capture stops before
+monitor playback is released; shutdown dispatches PTT OFF independently of
+audio cleanup and cancels pending CAT work. Morse characters survive skipped
+display frames. Receive DSP reuses FFT buffers and caches EQ/passband curves;
+the local benchmark shows 24–35% less processing time with identical PCM output.
+See `docs/AUDIT-2026-10-06.md` for findings, checks and station
+validation still needed.
+
+Version 0.6.6 extends the SWL shortwave-listening catalogue with persistent My
+Favourites, expanded full country names, receive-signal scanning for All Stations
+and My Favourites, selected-column ordered scanning with resumable continuation,
+segmented MHz frequency display, numeric frequency sorting,
+live NOAA/NWS and Australian BOM HF weather voice/radiofax entries, and broader
+USB/LSB/data-service recognition.
+Favourite additions are additive and source refreshes retain saved rows; favourite
+frequency and mode records can be edited and fed back into the master catalogue,
+with legacy EiBi USB/LSB rows repaired during migration.
+It also includes the v0.5.0 live previous-QSO lookup as a callsign is typed, a processed-AF
+Morse decoder with robust auto tone tracking, training overlay and full reference chart,
+and a resizable real-time HF Weather Fax decoder with official frequency updates,
+favourites, selectable viewing shades and UTC image capture metadata,
+user-selectable meter response/peak hold, raw meter diagnostics, and a persistent operator profile with
+a startup-aware welcome/loading screen and TX-reactive callsign banner. The five console
+themes now use individual radio faceplates, frequency-display styles and tuning
+dial identities. A read-only Service / VRF capability screen makes the Mark V
+Field's CAT boundary explicit and never sends unsafe undocumented writes.
+
+Version 0.4.0 made the documented main/sub dial-lock operations atomic and added
+N1MM Logger+ ADIF import with duplicate filtering and automatic backup.
+
+Version 0.3.1 also removes optional PDB debugging-symbol generation from the
+normal release build. On some Windows installations the legacy Framework
+compiler returned `CS0042` while creating the PDB even though the programme
+source itself compiled correctly. The release executable does not need a PDB.
+
+Version 0.3.0 repaired the two C# errors that prevented v0.2.0 from building and
+now writes a complete `BUILD-LOG.txt` on every attempt. It adds a real-time RX
+audio chain: 0–48 dB adaptive spectral noise reduction with selectable
+processing quality, a user-set low/high-cut signal passband, an eight-band ±12
+dB graphic equaliser, soft overload limiting, selectable Windows output and
+safe opt-in speaker/headphone monitoring. The CAT,
+metering, station tools and separate SCU-17 session design from v0.2.0 remain in
+place.
+
+## What is included
+
+- Fixed, correct Mark V Field serial format: **4800 baud, 8 data bits, no parity, 2 stop bits, no flow control**, with returned-data pacing reset to zero on connection.
+- Main and sub-VFO selection, direct frequency entry, mouse-wheel/drag tuning and selectable 10 Hz to 10 kHz tuning steps.
+- All twelve CAT-selectable modes: LSB, USB, CW, CW-R, AM, AM synchronous, FM, wide FM, both RTTY modes and both packet modes.
+- Band-stack shortcuts for 160 m through 10 m, including 60 m.
+- Split, dual receive, VFO-A/VFO-B, A-to-B copy, main/sub lock and CAT frequency stepping.
+- Clarifier control, memory recall/copy/scan skip, repeater selection and all 33 CTCSS tones.
+- Second- and third-IF filter selection, EDSP noise reduction and audio-notch controls.
+- Contest keyer memory and contest-number functions.
+- Smooth analogue-style main S-meter plus mode-aware Field power, SWR and ALC display (25 W full scale in AM, 100 W in other modes, with a manual override). Primary and detail readouts are separated for clarity.
+- Read-only **METER DIAGNOSTICS** view showing CAT raw bytes, normalized deflections, visual response/peak state and the current scale mapping; RF/S-unit/SWR/ALC values are explicitly labelled uncalibrated.
+- Live, user-scalable processed AF spectrum, peak trace and scrolling waterfall from the separate generic USB sound card connected to the receiver AF output. The VIEW tab provides 1024/2048/4096/8192-point FFT choices, up to 2048 display bins, an estimated noise-floor/SNR reference, adjustable SNR threshold and waterfall range above noise. It includes 0–40 dB DSP preamplification and, where the Windows driver exposes it, direct device input-volume control.
+- Built-in CW/Morse decoder driven by the processed AF input, with manual or robust locked automatic 300–1400 Hz tone selection, click-to-mark spectrum tuning, adaptive 5–300 WPM/gate timing, readable transcript, a dedicated ±250 Hz/5 ms CW waterfall with validated-keying trace for visual dits/dahs, adjustable waterfall height, and a complete letter/number/punctuation help chart.
+- Explicit opt-in 8-second processed-AF Morse replay buffer with local-output replay and delayed answer reveal; disabling capture clears the retained audio and decoder text.
+- **SIMULATE AF** generates a bounded `SOS G0ARE` receive-audio stream through the same DSP and Morse UI path for local diagnostics; it is visibly synthetic and uses no Windows input, CAT, keyer or transmit route, with optional local monitoring.
+- Built-in RX audio processing with adjustable adaptive stationary-noise reduction, Balanced/High/Maximum processing-quality modes, a soft-edged low/high-cut signal passband, eight graphic-EQ bands (80 Hz to 10 kHz), flat/voice presets and a safety limiter.
+- Selectable Windows speaker, headphone or external USB output for the filtered/equalised audio. Monitoring starts OFF and has a separate −30 to +12 dB output-gain control.
+- Resizable popout analogue meter that automatically changes from RX signal strength to TX RF power and includes an always-on-top option. Main and popout meters share Slow/Normal/Fast/Instant response and 0–10 second peak-hold controls.
+- Twelve radio-console layouts: the five original arrangements plus the seven new console presets. Each retains every function and accepts any skin; **Console Presets** applies a matching layout and skin in one click.
+- The themed console fits smaller windows without scrolling, retaining every main control and section launcher. Right-click RADIO, DSP/IF, AUDIO, MEM/REP, MORSE, KEYER, VIEW, CAT LOG or DIGI to open that live section in a separate fully resizable window; closing it restores the tab. Individual advanced windows retain their own scrolling where needed.
+- Thirteen independent skins: the six original choices and the seven new designs. The Enterprise Bridge uses an LCARS-inspired section rail and pastel controls, Deep Space Tactical uses a dark spacecraft instrument layout, and Orbital Glass uses cool blue glass-like panels.
+- Persistent station logbook in Documents, with live previous-contact filtering while a callsign is typed, an explicit comma-separated alias group for related historical identities, current CAT frequency/mode capture, CSV storage, ADIF export and N1MM Logger+ ADIF import with a dry-run preview, accepted/duplicate/rejected counts, duplicate protection and automatic backup.
+- Durable logbook commits use a complete temporary snapshot before replacement. Station Tools also provides data-only backup, isolated restore testing and an explicitly confirmed restore with a pre-restore safety copy; backups include the logbook, operator profile and non-secret appearance settings, not the executable, radio-internal state or secrets.
+- CAT feedback freshness is visible. PTT and antenna-tune actions require a fresh receive observation, a dedicated STOP TX action is available, and connection failures show TX state as unknown rather than silently implying receive.
+- Live Telnet DX cluster window with six supplied endpoints, editable host/port/callsign, raw terminal, parsed spot list and clickable per-band map.
+- Resizable **SWL · Shortwave Listening** window with a searchable current EiBi catalogue, active-now UTC filtering, AM/SSB/FM/CW modes, station hours/days/source fields, `STATIONS UPDATE`, standard CSV/TSV import, custom station entry and one-click CAT frequency/mode tuning. The `MY FAVOURITES` tab persists selected rows, the separate `Country name` column expands ITU/source codes, and `SCAN SIGNALS` scans either visible station tab using the grid's selected sort column/direction, fresh CAT S-meter levels, configurable threshold and dwell. When it stops on a signal or is paused, `CONTINUE SCAN` resumes after the last stopped station in the current order instead of restarting at row one; sorting, filtering or tab changes pause safely and preserve that continuation point. Out-of-range FM entries remain visible for reference but are not sent to the 0.1–30 MHz Mark V.
+- Resizable **Weather Fax** popout (or `Ctrl+Shift+X`) that demodulates standard HF WEFAX F3C audio in real time from the processed AF stream, automatically searches for phasing/synchronisation, renders 576-IOC image lines, offers Grayscale/Inverted/Blue Night/Amber/Green Phosphor/Sepia shades, and automatically saves completed images plus a UTC metadata sidecar. Published RF carriers are shown separately from the normal USB receiver tune point, approximately 1.9 kHz below the published frequency. The catalogue uses the official NOAA/NWS USCG marine broadcast page, Australian Bureau of Meteorology HF marine radio page and the bundled worldwide NOAA/NWS `rfax.pdf` schedule snapshot, shows emission/IOC and UTC windows, refreshes live sources in the background, and preserves **MY FAVOURITES** across updates.
+- Receive-only band scanner with editable start/end, step and dwell, up/down direction, and selectable stop thresholds from S0 through S9+60.
+- Explicit separate-session control that fully releases the CAT COM port for FT8, SSTV and other digital-mode software.
+- CAT byte trace for connection testing and fault-finding.
+- Configurable operator callsign/name, first-run setup, startup-aware welcome/loading splash with a 3-2-1 countdown and brief READY flash, and a large header callsign that turns red and adds TX whenever the radio transmits.
+- **Setup / Station Health** wizard that inventories available CAT/audio endpoints, records non-secret names plus wave-device IDs where available, refuses to silently reuse an unidentified endpoint, runs a receive-only simulator check and clearly separates local checks from physical-radio validation.
+- DX Cluster + Band Map now keeps a usable minimum map pane, zooms around the mouse position with the wheel, and spaces nearby spot labels to reduce overlap while preserving double-click tuning.
+- Logbook and DX Cluster share a guarded splitter layout that defers panel minimums until the window has a valid width, preventing the WinForms `SplitterDistance` startup exception.
+- The RADIO, DSP/IF, AUDIO and MORSE advanced-tab captions use compact readable typography with slightly wider tab buttons; the main frequency display is a larger bold seven-segment LED-style face with the helper text moved to a small lower-right footer.
+- TX power uses the corrected Mark V Field raw-power mapping so the shared main/pop-out meter path reaches the selected 100 W full scale; the RX path applies a calibrated idle zero floor while retaining raw 255 full scale and the existing peak response; the analogue meters use a cream old-style house-shaped face with a curved roof, square sides and bottom, an opaque dark title/readout band reserved above the housing, and optional raw/detail text at bottom-left.
+- Safe Service / VRF capability screen documenting that those physical/service controls are not exposed by the radio's documented CAT protocol.
+- Safe press-and-hold PTT from the RADIO tab's `HOLD PTT` button or the computer Space bar. The program sends PTT OFF on release, loss of focus, disconnect and exit; `STOP TX` remains available and keyer/ATU-start commands share the fresh-feedback transmit guard.
+- Hold the computer **Space** bar to transmit and release it to return to receive. The **Station Tools** menu exposes keyboard shortcuts for CAT, AF capture, exact frequency entry, Logbook, DX Cluster, scanner, the large meter and `STOP TX`; **F1** opens Quick Help.
+- **Settings → HoverHelp** toggles contextual explanations for controls, including quick-start values for adjustable settings. HoverHelp, control choices and the multi-window session layout are persisted in the versioned station settings file.
+- Confirmation before the real radio is instructed to start its internal ATU.
+- Full demo simulator, including moving meters and spectrum, requiring no radio.
+- The single-file `G0ARE_MK5F-0.6.12-Setup.exe` installer, which installs the per-user
+  `MK5F` application, creates Start Menu/Desktop shortcuts and uses the bundled
+  `MK5F` thumbnail/icon. The installer does not require administrator rights.
+- A first-run release-notes window plus `Station Tools → Check for Updates…`.
+  The update service accepts a maintainer-supplied HTTPS JSON manifest, downloads
+  only after operator confirmation, verifies the package SHA-256 and applies the
+  update after MK5F closes. Automatic checking is opt-in by URL and can be disabled
+  from `Settings → Automatic update checks`.
+
+## Build the executable on Windows 11
+
+The release ZIP includes a prebuilt `dist\G0ARE_MK5F.exe`. Double-click
+`RUN-DEMO.bat` for a safe no-radio preview, or start the executable directly for
+the real CAT/audio setup. No third-party runtime is bundled; the target is the
+Windows .NET Framework 4.8 already serviced as part of Windows.
+
+To reproduce or verify the build, no Visual Studio project is required:
+
+1. Extract the project folder to a normal local folder.
+2. Double-click `BUILD-WINDOWS.bat`.
+3. The script builds `dist\G0ARE_MK5F.exe` and runs the built-in CAT-protocol, RX-DSP, logbook, Morse, settings, backup, history, meter, station-health, diagnostic-AF, replay and UI/system responsiveness self-tests.
+4. Double-click `RUN-DEMO.bat` to inspect the interface safely without connecting the radio.
+
+To produce the reproducible portable bundle, run `PACKAGE-PORTABLE.ps1` from
+PowerShell. If the host execution policy blocks local scripts, use a
+process-scoped invocation such as `powershell.exe -NoProfile
+-ExecutionPolicy Bypass -File .\PACKAGE-PORTABLE.ps1`; this does not change the
+system policy. The script rebuilds and self-tests first, then writes
+  `dist\G0ARE_MK5F-0.6.12-portable.zip`, a ZIP SHA-256 sidecar, an unsigned
+release manifest and a content-addressed `SOURCE-MANIFEST.txt` for the source
+and build inputs. The bundle also includes `docs\BUILD-ENVIRONMENT-2026-09-05.md`,
+which records the observed compiler, runtime, native API and network surfaces.
+It is a portable package and is unsigned in this workspace. To create the single-file
+per-user Windows installer, run:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\PACKAGE-INSTALLER.ps1
+```
+
+This writes `dist\G0ARE_MK5F-0.6.12-Setup.exe` and its SHA-256 sidecar. The setup
+payload is embedded in the executable; it installs under the current user's
+`%LOCALAPPDATA%\Programs\MK5F`, creates an `MK5F` Start Menu/Desktop identity and
+preserves station data outside the installation directory. The installer also
+accepts `-quiet`, `-NoLaunch`, `-NoShortcuts` and `-InstallDirectory` for controlled
+deployment/testing.
+
+For the update service, publish a JSON manifest matching
+`UPDATE-MANIFEST.example.json` over HTTPS and enter its URL in
+`Station Tools → Check for Updates…`. The package URL and SHA-256 must refer to the
+portable ZIP; the application never applies a package whose hash does not match.
+
+Every attempt creates `BUILD-LOG.txt` beside the build script. The release build deliberately creates only `G0ARE_MK5F.exe`; a `.pdb` debugging-symbol file is neither generated nor required. If a build still fails, send the log rather than a screenshot; it contains the selected compiler and complete error text. If Windows reports that the C# compiler is missing, enable **.NET Framework 4.8 Advanced Services** in “Turn Windows features on or off”, restart Windows and run the build again.
+
+## Connect the Mark V Field
+
+1. Use a normal **straight-through USB-to-RS-232 serial adapter/cable** between the PC and the radio's DB-9 CAT connector. Do not use a null-modem cable. The radio has a true RS-232 level converter built in; do not connect a TTL-only USB serial lead directly.
+2. Switch on the radio, start the console, select its Windows COM port and leave DTR/RTS off for a normal powered USB-to-RS-232 adapter.
+3. Close any other program that directly owns the same COM port, then select **CONNECT CAT**.
+4. The frequency and mode should populate and the CAT activity indication on the radio should blink as the console polls it.
+5. For the AF display and processed listening audio, connect the radio's AF output to the small generic USB sound card, select that numbered Windows recording input and press **START AF**. Do not select the SCU-17 audio input; it remains reserved for digital-mode software. Selecting another input while AF is running switches capture immediately.
+
+## RX noise reduction, equaliser and listening output
+
+Open the **AUDIO** tab after starting AF capture. The processing order is digital
+input preamp → adaptive noise reduction → low/high-cut passband → eight-band EQ →
+safety limiter. The spectrum and waterfall show the processed signal.
+
+1. Leave **ADAPTIVE NR** on and begin around 10–14 dB. Excessive reduction can make weak speech sound watery; use only as much as the noise requires.
+2. Choose **Balanced** first. Use **High quality** or **Maximum** when you have CPU headroom and need finer spectral discrimination; these modes add processing latency as well as CPU cost.
+3. During a short gap with only the usual hiss/static, press **LEARN NOISE**. The automatic estimator continues tracking slow changes after the selected-quality learning window.
+4. For SSB speech, start with a low cut around 180–250 Hz and a high cut around 3000–3600 Hz. Widen these for AM/music or narrow them for a difficult signal.
+5. Shape the result with the eight EQ sliders. **VOICE** reduces bass/treble and lifts speech presence; **FLAT** returns all bands to 0 dB.
+6. Choose an output, keep its gain low, and tick **MONITOR PROCESSED AF**. Headphones are strongly recommended for the first test. Speakers can feed sound back into an open microphone input and howl.
+
+In the **VIEW** tab, use the longer FFT choices to separate nearby tones. The
+noise-floor and SNR guide lines are estimated from the lower part of the live AF
+spectrum; adjust **Noise reference trim** if the display is too optimistic or
+too conservative, then choose the **SNR threshold** and **Waterfall range above
+noise** that make the desired signal stand out. This remains an audio-frequency
+view of the selected receiver AF path, not a wideband RF/IQ panadapter.
+
+This is adaptive receive-noise reduction for stationary hiss, white noise and
+similar background noise. It is not physical two-microphone phase-cancellation:
+there is no separate reference microphone. It cannot recreate information already
+buried below the receiver/noise floor, and it will not reliably remove another
+station occupying the same audio frequencies.
+
+## Morse decoder and training overlay
+
+Start the generic USB AF input, tune a CW signal, then open **MORSE** and tick
+**DECODE CW**. The tab shows a live audio spectrum with a scrolling waterfall
+under it. Click a narrow peak to mark the audio tone, use **TUNE RADIO** to
+apply the correct USB/LSB/CW sideband correction to the radio, and use **RF ±
+STEP** for real-time manual centering. **AUTO TONE** searches 300–1400 Hz,
+rejects broadband noise with concentration/SNR checks, and requires a stable
+multi-block signal lock; untick it to use the exact sidetone frequency. The WPM
+control is only a starting hint: once locked, the decoder learns dot and gap
+timing and reports the measured WPM, including high-speed stations up to the
+300 WPM operating limit. Fast keying is measured in short frames so the gate
+does not erase short dits. Adjust the dBFS gate downward for weak signals or
+upward if a nearby carrier creates false candidates.
+
+**TRAINING OVERLAY** adds a rolling `character + dot/dash pattern` legend and
+tone marker inside the CW waterfall; the narrow waterfall is centered on the
+selected audio tone, uses 5 ms rows, and includes a longer validated-keying
+trace for visual dit/dah decoding. Use **WATERFALL %** to give that narrow
+view more vertical space when inspecting individual marks. It can be disabled
+without stopping the text decoder. **MORSE HELP** opens the complete A–Z, 0–9
+and common punctuation chart.
+Decoding accuracy depends on stable tuning, a narrow receiver filter, adequate
+audio level and reasonably clean sending; fading, QRM and multiple CW signals
+inside the passband can still cause mistakes.
+
+The **PRACTICE TONE** control plays one generated character through the selected
+local speaker/headphone output, then scores the character you type. It never
+uses CAT, the keyer or a transmit audio route; stop processed monitoring first
+and use headphones or a deliberate local output.
+
+**SIMULATE AF** is a separate receive-only diagnostic path. It generates a
+bounded `SOS G0ARE` sample stream in memory and sends it through the same
+processed spectrum, waterfall and Morse decoder path as captured AF. The UI
+labels it as synthetic; it never opens a Windows input, sends CAT, keys the
+radio or uses a transmit-audio route. Optional processed monitoring remains a
+local-output action and is subject to the same headphone/feedback precautions.
+
+For received-signal review, enable **REPLAY BUFFER (8s)** in the MORSE tab while
+AF capture is running. **DELAY ANSWER REVEAL** hides live decoded text and
+training annotations until **REVEAL REPLAY** is pressed. **REPLAY LAST** uses
+only the selected local speaker/headphone output; replay is memory-bounded,
+cleared when capture is disabled, and has no CAT/keyer/TX path. The revealed
+text is the decoder's raw result; no language-model correction is applied.
+
+## Separate digital-mode sessions
+
+The operating arrangement is deliberately separated:
+
+| Function | Interface | Used by |
+|---|---|---|
+| Radio control and metering | Selected CAT COM port | `G0ARE_MK5F`, except during a digital session |
+| Live analogue AF spectrum | Radio AF output → generic USB sound card | `G0ARE_MK5F` |
+| FT8/SSTV transmit and receive audio | SCU-17 USB audio interface | External digital-mode software only |
+
+To change over, open the **DIGI** tab and press **RELEASE CAT FOR DIGI**. The console sends PTT OFF, stops CAT polling, closes the serial port completely and prevents accidental reconnection. Start the external digital application and let it use the released CAT COM port and SCU-17 audio interface. When finished, close the digital application, press **END DIGI SESSION**, then reconnect CAT in `G0ARE_MK5F`.
+
+Only one application may directly own the same Windows COM port at a time. Separate-session mode avoids a fragile serial-port splitter and makes the active controller unambiguous.
+
+Some passive CAT interfaces derive power from RTS or DTR. Only tick the corresponding option if the interface documentation specifically requires it.
+
+## First live-radio test
+
+- Start with the radio in receive and use the CAT log to confirm five-byte requests and valid responses.
+- Try a harmless mode change and a small VFO change before testing any transmit function.
+- Verify that the program and front panel remain synchronised when either one changes the VFO.
+- Test PTT into a dummy load at minimum RF power.
+- Do not start the internal tuner unless the intended antenna/dummy load is connected and the selected frequency is valid for transmission.
+
+## Accuracy and capability boundaries
+
+The console exposes a broad set of the documented CAT controls, with the exact coverage listed in `docs\CAT-CAPABILITY-MATRIX.md`. The Mark V Field CAT system does **not** provide software write-control of every physical potentiometer or analogue front-panel control. It can read several control positions (including SHIFT, WIDTH, contour and NR) and those readings are provided on the DSP/IF tab.
+
+There is no documented CAT opcode for entering/writing the hidden alignment or
+service menu, nor for switching or tuning VRF. Those functions remain physical
+radio/service operations. **Station Tools → Service / VRF Capability** explains
+the boundary in the application; it intentionally contains no active service
+write buttons. Never change alignment values without the service procedure,
+appropriate test equipment and a record of the original settings.
+
+The S, power, ALC and SWR values are the radio's 8-bit digitised meter deflections. The watt estimate automatically uses the Field's 25 W AM or 100 W non-AM full-scale rating; the VIEW tab also permits a manual full-scale value. These figures are not a substitute for a calibrated external RF power/SWR meter.
+
+The **VIEW** tab controls visual gain, 0–40 dB digital DSP preamp, hardware input level, dBFS floor and 3–12 kHz span. It also opens the large RX/TX analogue meter, the read-only **METER DIAGNOSTICS** report, automatic/manual RF-power scaling, meter response and peak marker hold time. The primary meter readout and cream house-shaped face are shared by the main and pop-out meters; the opaque dark title/readout band is reserved above the housing so the labels stay clear of the roof, and optional raw/detail text sits at the bottom-left. The diagnostics report records raw CAT fields and display mappings without claiming RF calibration; **RESET VISUAL PEAKS** affects only the PC-side markers and sends no CAT command. Hardware input level is driver-dependent; when a generic USB device does not publish a Windows mixer volume control, the app reports that clearly and the independent digital boost remains available. Digital boost cannot restore signal-to-noise ratio already lost before the ADC, so a true line/mic preamplifier is still the best remedy for an exceptionally low analogue source.
+
+The **RAW FFT (A/B)** switch compares the input waveform with the processed
+waveform in the spectrum/waterfall. It does not bypass processing for the
+headphone monitor or Morse decoder, which remain on the processed path.
+
+## Station Tools menu
+
+Open **Station Tools → Logbook** to record the current CAT frequency, band and mode with callsign, reports, name and notes. The working CSV is stored at `Documents\G0ARE_MK5F\G0ARE_Logbook.csv`; **EXPORT ADIF** creates an `.adi` file for interchange with other logging software. **BACK UP DATA** writes a manifest and SHA-256 checked data-only snapshot to a selected folder, **TEST RESTORE** validates it in an isolated temporary directory, and **RESTORE DATA** creates a pre-restore safety backup before replacing the live logbook, profile and appearance settings.
+
+As soon as characters are entered in the CALL field, the table changes to all
+matching previous QSOs, newest first, with the full UTC date and time. Use the
+optional **ALIAS GROUP** field for explicitly chosen related callsigns separated
+by commas or semicolons; aliases are exact matches, while the primary CALL field
+remains a prefix search. Stored callsigns are never rewritten or merged. Clear
+both fields to return to the complete log. If a damaged CSV contains rows that
+cannot be loaded, the status line shows a warning instead of silently presenting
+an incomplete history.
+
+To bring an existing N1MM Logger+ log across, use N1MM's **File → Export → Export ADIF to file**, then choose **IMPORT N1MM / ADIF** in this programme. Callsign, UTC, frequency, band, mode/submode, reports, name, comments, grid and contest exchanges are imported. A dry-run preview shows accepted rows, duplicates and rejected-record details; nothing is written until **IMPORT ACCEPTED** is confirmed. Existing QSOs with the same UTC second, callsign, frequency and mode are skipped, and the programme makes a timestamped `pre-import` copy of the CSV before adding records.
+
+**EXPORT SAFE CSV** creates a spreadsheet-safe convenience export. Formula-like free text is prefixed only in that export; the canonical logbook remains unchanged. Use ADIF or the data-only backup for interchange/recovery semantics.
+
+The **Themes** menu changes the placement and proportion of the control banks, VFO display, spectrum, meters and advanced tabs. The **Skins** menu is deliberately separate and changes only the colour treatment, so the Arctic Laboratory skin works with Classic Mark V, the science layout, or any other theme. If a theme's virtual content is larger than the current window, scroll the main workspace rather than losing controls. Right-click an advanced tab to move its live controls into a sizable window; close that window to put the section back into the tab strip.
+
+Open **Help → Quick Help and Keyboard Shortcuts** or press `F1` for the
+receive-first operating guide. Hover any control with **Settings → HoverHelp**
+enabled to see its function and, where useful, an ideal starting value.
+
+Appearance settings are versioned and written atomically. A small last-known-good
+copy is retained so a damaged settings file can fall back safely without
+restoring or changing CAT, audio or TX state.
+The settings file also retains the selected CAT port and audio endpoint names as
+non-secret preferences, plus the Windows wave-device IDs when available. If a
+saved audio name/ID pair is no longer identifiable, the console leaves that
+endpoint unselected and asks for explicit operator selection; it never silently
+falls back to the first device. The wizard never opens the radio port or sends
+a CAT command.
+If the UI itself needs recovery, launch `G0ARE_MK5F.exe --safe-mode`; it uses
+the default appearance, never auto-connects CAT, and does not overwrite the
+saved settings when it closes.
+
+Open **Station Tools → DX Cluster + Band Map** for Telnet spots. Choose a supplied cluster or edit the host and port, confirm the profile callsign used for login, and connect. Double-click a spot row or a callsign on the band map to tune the active VFO. Public nodes can change or be unavailable, which is why all connection fields remain editable.
+
+Open **Station Tools → SWL · Shortwave Listening** (or press `Ctrl+Shift+Y`) for the broadcast catalogue. The default `STATIONS UPDATE` sources are the current seasonal EiBi schedule plus live NOAA/NWS and Australian BOM HF marine weather pages. Frequencies use the segmented MHz style, for example `10.100.10`; click a grid header to choose its sort column and direction, with the frequency column providing numeric low-to-high/high-to-low order. Use the search box and optional **ACTIVE NOW** filter, then double-click a tuneable entry to send its frequency and mode to the Mark V after CAT is connected. Select a row and use **ADD TO FAVOURITES** to save it in **MY FAVOURITES**; the original ITU/source code remains in `Country / ITU` and the expanded country appears in `Country name`. **SCAN SIGNALS** tunes the current All Stations or My Favourites view in the grid's active sort order, waits for the selected Dwell time, records the received CAT S-meter level in `Signal`, and stops at the selected S-meter threshold; it never transmits. When it stops, press **CONTINUE SCAN** to continue after the stopped station. Changing the sort column/direction, filter or tab pauses safely and preserves the continuation point; if that row is no longer visible, the new order starts at its first tuneable row. **ADD STATION** stores a station you found yourself. **IMPORT LIST** accepts an authorised CSV/TSV export such as an FMLIST/MWLIST-style station list; providers may require an account and may restrict automated downloads. USB/LSB utility, weather voice and USB radiofax/weatherfax rows are labelled in the station name and notes. The catalogue is stored at `Documents\G0ARE_MK5F\SWL-Stations.json` and is included in data backups. The FT-1000MP Mark V Field cannot tune 88–108 MHz broadcast FM, so those entries are shown for reference only.
+
+Open **Station Tools → Weather Fax** (or press `Ctrl+Shift+X`) after starting the generic receive AF input. Select a published carrier from **ALL FREQUENCIES** or **MY FAVOURITES**, choose **TUNE SELECTED**, then press **START DECODER**. The decoder follows the standard 1900 Hz WEFAX audio centre with ±400 Hz black/white shift, uses phasing markers when present and falls back to a free-running line clock when a transmitter omits a clean phasing sequence. **AUTO SAVE** writes PNG images and `.txt` sidecars under `Documents\G0ARE_MK5F\WeatherFax`, including published and receiver-tuned frequencies, UTC time, station/source when known, decoder settings, line count and shade. The frequency file is stored at `Documents\G0ARE_MK5F\WeatherFax-Stations.json`; the update button and background refresh retain the last usable list if an official site is temporarily unreachable.
+
+The band map automatically keeps a minimum readable pane size. Move the mouse
+over it and use the wheel to zoom around the pointer; nearby spot labels are
+spaced with short connector marks when needed. Double-clicking a visible spot
+still tunes the active VFO.
+
+Open **Station Tools → S-meter Band Scanner** to choose a band or exact range, direction, tuning step, settling time and S-meter threshold. The scanner changes only the active receive VFO, stops on the first reading at or above the threshold, stops automatically if transmit begins, and never keys PTT.
+
+Open **Station Tools → Setup / Station Health** for a receive-first routing wizard, or **Diagnostics / About** for a redacted station-health report covering the application/runtime, executable hash, CAT freshness and retry state, audio/DSP/Morse state, data/recovery scope, free space and release-trust limits. The report intentionally excludes QSO/audio content, credentials, full user paths and CAT traces; copy or save it only when support evidence is needed.
+
+## Keyboard and control shortcuts
+
+- Mouse wheel over the frequency display or tuning dial: tune by the selected step.
+- `F11` (or `Esc` while full-screen): toggle the main console between a normal resizable window and borderless full-screen mode.
+- Drag the tuning dial vertically: tune continuously.
+- Double-click the frequency display: exact MHz entry.
+- Hold `Space`: PTT; release Space to return to receive. `Ctrl+Space` remains compatible.
+- `F1`: Quick Help and Keyboard Shortcuts.
+- `Ctrl+Shift+C/A/F/L/D/N/M/S/H`: CAT, AF, exact frequency, Logbook, DX Cluster, scanner, large meter, STOP TX and HoverHelp toggle.
+- `Ctrl+Shift+Y`: SWL shortwave-listening catalogue.
+
+## Files
+
+- `src\CatProtocol.cs` — command encoding, status parsing and rig model.
+- `src\RigLink.cs` — serial transport and safe demo simulator.
+- `src\AudioAndDsp.cs` — Windows audio capture and spectrum FFT.
+- `src\RxAudioProcessing.cs` — adaptive noise reduction, signal passband, graphic EQ, limiter and selectable Windows playback.
+- `src\VisualControls.cs` — analogue meters, meter peak hold, radio-style displays, tuning dial and spectrum/waterfall overlay.
+- The live spectrum/waterfall UI coalesces audio snapshots, throttles display FFT work and uses a cached bulk bitmap so high-resolution AF data does not flood the WinForms message loop.
+- `src\MorseDecoder.cs` / `src\MorseUi.cs` — real-time CW decoder, reference table, training help and safe Service / VRF screen.
+- `src\MorseReplay.cs` — bounded processed-AF replay buffer and delayed decoder-answer snapshot.
+- `src\DiagnosticAudio.cs` — bounded generated receive-audio session used by the local SIMULATE AF diagnostic path.
+- `src\OperatorProfile.cs` — persistent callsign/name setup and startup-aware welcome/loading display.
+- `src\StationSettings.cs` / `src\StationBackup.cs` — versioned appearance preferences and manifest-checked data backup/restore.
+- `src\StationDeviceSelection.cs` — exact friendly-name/wave-device-ID matching with no silent endpoint fallback.
+- `PACKAGE-PORTABLE.ps1` — reproducible portable bundle, file manifest and SHA-256 sidecar.
+- `PACKAGE-INSTALLER.ps1` / `installer\InstallerStub.cs` — single-file self-extracting
+  per-user Windows setup with the embedded MK5F icon and payload.
+- `Install-MK5F.ps1` / `Apply-Update.ps1` — setup and post-exit update helpers; the
+  updater preserves station data and verifies the package before applying it.
+- `src\ReleaseAndUpdate.cs` — first-run release notes, update-manifest validation,
+  SHA-256 download verification and controlled restart/update flow.
+- `src\LargeMeterForm.cs` — resizable automatic RX/TX popout meter.
+- `src\SectionWindowForm.cs` — resizable, scrollable host used for detached advanced sections.
+- `src\MeterDiagnosticsForm.cs` — raw CAT meter observation, scale/dynamics report and visual-only peak reset.
+- `src\StationHealthWizardForm.cs` — receive-first endpoint inventory, local simulator check and non-secret station-routing preferences.
+- `src\Scanner.cs` — configurable CAT frequency scanner and amateur-band definitions.
+- `src\StationTools.cs` — CSV/ADIF logbook, Telnet client, spot parser and band map.
+- `src\SwlStation.cs` — online EiBi/NOAA/BOM/CSV/TSV station catalogue, country-name mapping, persistent favourites, signal scan, weather/data parser, SWL editor/importer and tune window.
+- `src\WeatherFax.cs` / `src\WeatherFaxForm.cs` — real-time WEFAX demodulator, image buffer/shade palettes, official frequency catalogue, favourites and capture window.
+- `src\StationDiagnosticsForm.cs` — redacted diagnostics/about report and explicit copy/save actions.
+- `src\MainForm.cs` — operator interface and control logic.
+- `src\Program.cs` — application entry point and self-test.
+- `docs\CAT-CAPABILITY-MATRIX.md` — implemented command map and validation notes.
+- `tests\DspEngineSmokeTest.cs` / `tests\MorseDecoderSmokeTest.cs` — deterministic receive-audio and 700 Hz Morse tests.
+- `docs\REAL-RADIO-CHECKLIST.md` — receive-first CAT and live-radio/audio test procedure.
+
+## Recommended next validation stage
+
+Version 0.6.6 compiles cleanly without PDB generation against the Windows .NET Framework 4.8 reference assemblies. Its deterministic protocol, SWL country/favourites/ordered-resumable-signal-scan and additive-favourite migration tests, current NOAA/BOM table-layout weather parser, worldwide RFAX schedule snapshot, numeric sorting, ADIF-import, RX-DSP, high-resolution FFT/rolling-window, auto-tone 860 Hz `SOS` Morse and synthetic WEFAX line-decoder checks pass. Because the programme cannot be connected to your physical transceiver or Windows audio devices in this workspace, lock verification, TX metering, live CW/WEFAX reception from the station audio path, USB hardware-volume support, processed-output selection, live CPU/latency headroom, live station-source reachability, public-cluster reachability and FM hardware coverage still need a short station retest. If the Windows build fails, send `BUILD-LOG.txt`. If lock feedback remains incorrect, save the CAT-log lines beginning with the `TX 00 00 00 00 04`/`01 04` main commands or `02 04`/`03 04` sub commands and their following status replies.
+
+The radio's compact operating-data record reports seven base mode families and an IF-mode extension bit. The application decodes those fields for LSB/USB and the CW, AM, RTTY and packet variants. Wide FM is retained after it is selected because the compact feedback record does not expose a separate wide-FM family value.
